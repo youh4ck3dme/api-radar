@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ..
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../api_radar.db:/app/api_radar.db
+
+  dashboard:
+    build:
+      context: ../dashboard
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+  scanner:
+    build:
+      context: ..
+      dockerfile: scanner/Dockerfile
+    volumes:
+      - ../api_radar.db:/app/api_radar.db
+      - /var/log/nginx:/var/log/nginx:ro
+    environment:
+      - LOG_PATH=/var/log/nginx/access.log
