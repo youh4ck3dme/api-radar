@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #1e3a8a;
+  --color-secondary: #3b82f6;
+
+  /* Premium Card Tokens */
+  --color-glass-base: #1e3a8a66;
+  /* rgba(30, 58, 138, 0.4) */
+  --color-glass-dark: #0f172acc;
+  /* rgba(15, 23, 42, 0.8) */
+  --color-glass-border-light: rgba(255, 255, 255, 0.15);
+
+  /* Box Shadows */
+  --shadow-glass-inner: inset 0 2px 2px 0 rgba(96, 165, 250, 0.3), inset 0 -2px 2px 0 rgba(0, 0, 0, 0.4), 0 15px 35px rgba(0, 0, 0, 0.5);
+  --shadow-glass-button: 0 0 0 1px rgba(255, 255, 255, 0.15), inset 120px 0 100px -100px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.1);
+  --shadow-glass-button-hover: 0 0 0 1px rgba(96, 165, 250, 0.5), inset 200px 0px 100px -100px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(59, 130, 246, 0.3);
+
+  /* Animations */
+  --animate-rotate360: rotate360 22s linear infinite;
+  --animate-rotate360-fast: rotate360 18s linear -10s infinite;
+  --animate-wobble-1: wobble 18s ease-in-out infinite;
+  --animate-wobble-2: wobble 22s ease-in-out -6s infinite reverse;
+  --animate-wobble-3: wobble 26s ease-in-out -18s infinite;
+}
+
+@keyframes rotate360 {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes wobble {
+  0% {
+    transform: translateX(8px) translateY(15px) rotate(-2deg) scale(1);
+  }
+
+  20% {
+    transform: translateX(-35px) translateY(-8px) rotate(4deg) scale(1.01);
+  }
+
+  60% {
+    transform: translateX(25px) translateY(12px) rotate(-5deg) scale(1);
+  }
+
+  80% {
+    transform: translateX(-30px) translateY(-18px) rotate(8deg) scale(0.97);
+  }
+
+  100% {
+    transform: translateX(8px) translateY(15px) rotate(-2deg) scale(1);
+  }
+}
