@@ -20,11 +20,11 @@ def get_endpoints():
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT method, endpoint, count FROM endpoints ORDER BY count DESC")
+    cursor.execute("SELECT method, endpoint, count, is_shadow FROM endpoints ORDER BY is_shadow DESC, count DESC")
     rows = cursor.fetchall()
     conn.close()
     
-    return [{"method": r[0], "endpoint": r[1], "count": r[2]} for r in rows]
+    return [{"method": r[0], "endpoint": r[1], "count": r[2], "is_shadow": bool(r[3])} for r in rows]
 
 if __name__ == "__main__":
     import uvicorn

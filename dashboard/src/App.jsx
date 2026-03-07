@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+
+const API_ROOT = 'http://localhost:8000';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [endpoints, setEndpoints] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const fetchEndpoints = async () => {
+        try {
+            const resp = await fetch(`${API_ROOT}/endpoints`);
+            const data = await resp.json();
+            setEndpoints(data);
+            setLoading(false);
+        } catch (err) {
+            console.error('Failed to fetch:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchEndpoints();
+        const interval = setInterval(fetchEndpoints, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="dashboard">
+            <header>
+                <h1>API RADAR</h1>
+                <div className="status-badge">Phase 2: Shadow Detection</div>
+            </header>
+
+            {loading ? (
+                <div style={{ textAlign: 'center' }}>Initializing Radar...</div>
+            ) : (
+                <div className="radar-grid">
+                    {endpoints.length === 0 ? (
+                        <div className="api-card">No endpoints discovered yet.</div>
+                    ) : (
+                        endpoints.map((api, idx) => (
+                            <div key={idx} className={`api-card ${api.is_shadow ? 'is-shadow' : ''}`}>
+                                <div>
+                                    <span className={`method ${api.method}`}>{api.method}</span>
+                                    <span className="endpoint">{api.endpoint}</span>
+                                    {api.is_shadow ? (
+                                        <span className="shadow-badge">Shadow Alert</span>
+                                    ) : (
+                                        <span className="documented-badge">Documented</span>
+                                    )}
+                                </div>
+                                <div className="stats">
+                                    <span className="count-label">Discovery Count</span>
+                                    <span className="count-value">{api.count}</span>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default App
+export default App;

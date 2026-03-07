@@ -18,6 +18,15 @@ def init_db():
             method TEXT,
             endpoint TEXT,
             count INTEGER DEFAULT 0,
+            is_shadow INTEGER DEFAULT 1,
+            UNIQUE(method, endpoint)
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS documented_endpoints (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            method TEXT,
+            endpoint TEXT,
             UNIQUE(method, endpoint)
         )
     ''')
@@ -27,14 +36,20 @@ def init_db():
 def update_endpoint(method, endpoint):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
+    
+    # Check if this endpoint is documented
+    cursor.execute("SELECT 1 FROM documented_endpoints WHERE method = ? AND endpoint = ?", (method, endpoint))
+    is_shadow = 0 if cursor.fetchone() else 1
+
     cursor.execute('''
-        INSERT INTO endpoints (method, endpoint, count)
-        VALUES (?, ?, 1)
-        ON CONFLICT(method, endpoint) DO UPDATE SET count = count + 1
-    ''', (method, endpoint))
+        INSERT INTO endpoints (method, endpoint, count, is_shadow)
+        VALUES (?, ?, 1, ?)
+        ON CONFLICT(method, endpoint) DO UPDATE SET count = count + 1, is_shadow = ?
+    ''', (method, endpoint, is_shadow, is_shadow))
     conn.commit()
     conn.close()
-    print(f"Updated: {method} {endpoint}")
+    status = "SHADOW" if is_shadow else "DOCUMENTED"
+    print(f"Updated: {method} {endpoint} [{status}]")
 
 def collect_logs(log_file_path):
     print(f"Starting log collection from {log_file_path}...")

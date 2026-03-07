@@ -12,9 +12,14 @@ DUMMY_LOGS = [
     '88.212.19.47 - - [08/Mar/2026:00:07:22 +0100] "POST /api/login HTTP/1.1" 201',
     '88.212.19.47 - - [08/Mar/2026:00:07:23 +0100] "GET /api/users HTTP/1.1" 200',
     '88.212.19.47 - - [08/Mar/2026:00:07:24 +0100] "GET /api/dashboard/stats HTTP/1.1" 200',
+    '88.212.19.47 - - [08/Mar/2026:00:07:25 +0100] "GET /api/internal/debug HTTP/1.1" 200',
 ]
 
 def run_test():
+    # 0. Import OpenAPI docs
+    print("Importing known endpoints...")
+    subprocess.run(["python", "parser/openapi_parser.py", "sample_openapi.json"], check=True)
+
     # 1. Start the scanner in the background
     print("Starting scanner...")
     scanner_env = os.environ.copy()
@@ -37,13 +42,14 @@ def run_test():
     print("Checking database...")
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT method, endpoint, count FROM endpoints")
+    cursor.execute("SELECT method, endpoint, count, is_shadow FROM endpoints")
     rows = cursor.fetchall()
     conn.close()
     
     print("\nDiscovered Endpoints in DB:")
-    for method, endpoint, count in rows:
-        print(f"{method} {endpoint} -> {count}")
+    for method, endpoint, count, is_shadow in rows:
+        status = "SHADOW" if is_shadow else "DOCUMENTED"
+        print(f"{method} {endpoint} -> {count} [{status}]")
         
     # 4. Cleanup
     process.terminate()
