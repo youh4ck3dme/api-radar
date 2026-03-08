@@ -15,6 +15,14 @@
       </div>
       <div class="flex items-center gap-3 w-full sm:w-auto">
         <button 
+          @click="toggleSentinel" 
+          :class="sentinelActive ? 'bg-emerald-500 text-white' : 'bg-neutral-800 text-neutral-400'"
+          class="flex-1 sm:flex-none px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 border border-white/5 active:scale-95"
+        >
+          <span>{{ sentinelActive ? '🛡️' : '🔔' }}</span> 
+          {{ sentinelActive ? 'Sentinel Active' : 'Enable Sentinel' }}
+        </button>
+        <button 
           @click="startScanner" 
           class="flex-1 sm:flex-none bg-neutral-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-2xl hover:shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-3 border border-white/10"
         >
@@ -157,14 +165,66 @@ import axios from 'axios';
 
 const endpoints = ref([]);
 const loading = ref(false);
+const shadowCount = ref(0);
+const sentinelActive = ref(false);
 
-const shadowCount = computed(() => endpoints.value.filter(e => e.is_shadow).length);
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+};
+
+const toggleSentinel = async () => {
+    if (sentinelActive.value) {
+        sentinelActive.value = false;
+        return;
+    }
+
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            alert('Notification permission denied');
+            return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+        const vapidRes = await api.get('/radar/vapid-key');
+        const publicKey = vapidRes.data.publicKey;
+
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey)
+        });
+
+        const subObj = subscription.toJSON();
+        await api.post('/radar/subscribe', {
+            endpoint: subObj.endpoint,
+            keys: {
+                p256dh: subObj.keys.p256dh,
+                auth: subObj.keys.auth
+            }
+        });
+
+        sentinelActive.value = true;
+        console.log('Sentinel Web Push Subscribed');
+    } catch (err) {
+        console.error('Sentinel activation failed:', err);
+        alert('Failed to activate Sentinel alerts. Ensure your browser supports Web Push and PWA features.');
+    }
+};
 
 const fetchEndpoints = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/api/radar/endpoints');
+    const response = await api.get('/radar/endpoints');
     endpoints.value = response.data;
+    // Update shadow count reactively
+    shadowCount.value = endpoints.value.filter(e => e.is_shadow).length;
   } catch (error) {
     console.error('Radar fetch error:', error);
   } finally {

@@ -7,6 +7,32 @@ from sqlalchemy.orm import Session
 from .models import ObservedEndpoint, DocumentedEndpoint
 from ..db import SessionLocal
 import re
+import json
+from pywebpush import webpush, WebPushException
+from .models import ObservedEndpoint, DocumentedEndpoint, PushSubscription
+
+VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
+VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY")
+VAPID_MAILTO = os.getenv("VAPID_MAILTO", "mailto:admin@example.com")
+
+def send_push_notification(db: Session, title, message):
+    subs = db.query(PushSubscription).all()
+    for sub in subs:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": sub.endpoint,
+                    "keys": {"p256dh": sub.p256dh, "auth": sub.auth}
+                },
+                data=json.dumps({"title": title, "body": message}),
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims={"sub": VAPID_MAILTO}
+            )
+        except WebPushException as ex:
+            print(f"Push failed: {ex}")
+            if ex.response and ex.response.status_code == 410:
+                db.delete(sub)
+                db.commit()
 
 def parse_nginx_log_line(line):
     match = re.search(r'"([A-Z]+)\s+([^\s?]+)', line)
@@ -41,6 +67,13 @@ def update_endpoint(method, endpoint):
                 is_shadow=is_shadow
             )
             db.add(obs)
+            # Sentinel Alert: New Shadow Detected
+            if is_shadow:
+                send_push_notification(
+                    db, 
+                    "⚠️ NEW SHADOW API", 
+                    f"Detected: {method} {endpoint}"
+                )
         
         db.commit()
         print(f"Discovered: {method} {endpoint} [{'SHADOW' if is_shadow else 'KNOWN'}]")

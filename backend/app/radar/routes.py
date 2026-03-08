@@ -3,11 +3,33 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from ..db import get_db
-from .models import ObservedEndpoint, DocumentedEndpoint
+from .models import ObservedEndpoint, DocumentedEndpoint, PushSubscription
 from .scanner import run_scanner_background
 import os
+from pydantic import BaseModel
+
+class SubscriptionInfo(BaseModel):
+    endpoint: str
+    keys: dict
 
 router = APIRouter()
+
+@router.get("/radar/vapid-key")
+def get_vapid_key():
+    return {"publicKey": os.getenv("VAPID_PUBLIC_KEY")}
+
+@router.post("/radar/subscribe")
+def subscribe_notifications(sub: SubscriptionInfo, db: Session = Depends(get_db)):
+    existing = db.query(PushSubscription).filter(PushSubscription.endpoint == sub.endpoint).first()
+    if not existing:
+        new_sub = PushSubscription(
+            endpoint=sub.endpoint,
+            p256dh=sub.keys.get("p256dh"),
+            auth=sub.keys.get("auth")
+        )
+        db.add(new_sub)
+        db.commit()
+    return {"status": "Subscribed"}
 
 @router.get("/radar/endpoints")
 def get_discovered_endpoints(db: Session = Depends(get_db)):

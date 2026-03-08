@@ -18,3 +18,11 @@ class DocumentedEndpoint(Base):
     id = Column(Integer, primary_key=True, index=True)
     method = Column(String(10), nullable=False)
     endpoint = Column(String(512), nullable=False)
+
+class PushSubscription(Base):
+    __tablename__ = "push_subscriptions"
+    id = Column(Integer, primary_key=True, index=True)
+    endpoint = Column(String(512), nullable=False, unique=True)
+    p256dh = Column(String(256), nullable=False)
+    auth = Column(String(256), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
