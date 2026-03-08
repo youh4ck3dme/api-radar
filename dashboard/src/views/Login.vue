@@ -173,31 +173,34 @@ const login = async () => {
 /* ── Radar Background ─────────────────────────── */
 .radar-container {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0; width: 100%; height: 100%;
   background: #020202;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 0; /* Below everything */
 }
 .radar-grid {
   position: absolute;
   width: 200vw;
   height: 200vw;
   background-image: 
-    linear-gradient(rgba(0, 255, 100, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 100, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(0, 255, 120, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 120, 0.08) 1px, transparent 1px);
   background-size: 80px 80px;
-  transform: rotateX(60deg) translateZ(-200px);
+  transform: rotateX(60deg) translateZ(-100px);
+  opacity: 0.8;
 }
 .radar-scan {
   position: absolute;
-  width: 1000px;
-  height: 1000px;
-  background: conic-gradient(from 0deg, rgba(0, 255, 100, 0.3) 0%, transparent 40%);
+  width: 1200px;
+  height: 1200px;
+  background: conic-gradient(from 0deg, rgba(0, 255, 100, 0.6) 0%, transparent 50%);
   border-radius: 50%;
-  animation: scan 4s linear infinite;
-  mask-image: radial-gradient(circle, black 0%, transparent 70%);
+  animation: scan 6s linear infinite;
+  mask-image: radial-gradient(circle, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle, black 30%, transparent 80%);
 }
 @keyframes scan {
   from { transform: rotate(0deg); }
@@ -205,13 +208,14 @@ const login = async () => {
 }
 .radar-ping {
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #00ff64;
+  width: 10px;
+  height: 10px;
+  background: #00ff78;
   border-radius: 50%;
-  filter: blur(2px);
-  box-shadow: 0 0 15px #00ff64;
+  filter: blur(1px);
+  box-shadow: 0 0 12px #00ff78;
   opacity: 0;
+  z-index: 1;
 }
 .p1 { top: 20%; left: 30%; animation: ping 4s linear infinite; }
 .p2 { top: 60%; left: 70%; animation: ping 4s 1s linear infinite; }
