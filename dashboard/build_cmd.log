@@ -1,0 +1,33 @@
+
+> domain-ssl-manager@0.1.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 9 modules transformed.
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 53 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[36msw.js  [39m[1m[2m43.75 kB[22m[1m[22m[2m │ gzip: 12.37 kB[22m
+[32m✓ built in 718ms[39m
+
+PWA v0.17.5
+mode      injectManifest
+precache  8 entries (170.52 KiB)
+files generated
+  dist\sw.js
+[31mx[39m Build failed in 3.04s
+[31merror during build:
+[31m[vite-plugin-pwa:build] There was an error during the build:
+  [plugin vite:vue] src/views/Domains.vue (75:3): Invalid end tag.
+Additionally, handling the error in the 'buildEnd' hook caused the following error:
+  [plugin vite:vue] src/views/Domains.vue (75:3): Invalid end tag.[31m
+file: [36mC:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/src/views/Domains.vue:75:3[31m
+    at getRollupError (file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/rollup/dist/es/shared/node-entry.js:23467:39
+    at async catchUnfinishedHookActions (file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/rollup/dist/es/shared/node-entry.js:22925:16)
+    at async rollupInternal (file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/rollup/dist/es/shared/node-entry.js:23450:5)
+    at async build (file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65709:14)
+    at async CAC.<anonymous> (file:///C:/Users/42195/.gemini/antigravity/scratch/api-radar/dashboard/node_modules/vite/dist/node/cli.js:829:5)[39m

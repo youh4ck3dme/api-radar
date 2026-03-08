@@ -117,9 +117,8 @@
     <div v-else-if="!loading" class="py-32 bg-white rounded-[2.5rem] border-2 border-dashed border-neutral-100 px-6 text-center shadow-sm">
       <div class="text-neutral-200 text-6xl mb-6 grayscale opacity-30">📊</div>
       <h3 class="text-xl font-black text-neutral-900 tracking-tight uppercase">Telemetry Vacant</h3>
-      <p class="mt-2 text-sm text-neutral-400 font-medium max-w-xs mx-auto italic italic">Activate endpoints to stream real-time performance data to the engine.</p>
+      <p class="mt-2 text-sm text-neutral-400 font-medium max-w-xs mx-auto italic">Activate endpoints to stream real-time performance data to the engine.</p>
     </div>
-  </div>
   </div>
 </template>
 
