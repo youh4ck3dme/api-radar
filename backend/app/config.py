@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     JWT_EXPIRE_MINUTES: int = 1440
 
     # Defaults for local development
-    ALLOWED_HOSTS: str = "localhost,127.0.0.1,0.0.0.0,localhost:8000,localhost:3000,testserver"
-    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+    ALLOWED_HOSTS: str = "localhost,127.0.0.1,0.0.0.0,localhost:8000,localhost:3000,localhost:6666,testserver"
+    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:6666,http://127.0.0.1:6666"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

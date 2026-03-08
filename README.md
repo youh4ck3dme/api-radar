@@ -54,7 +54,7 @@ docker-compose -f docker/docker-compose.yml up --build
 ```
 
 ### 3. Open dashboard
-Open your browser at `http://localhost:5173` (React) or check API at `http://localhost:8000/endpoints`.
+Open your browser at `http://localhost:6666` (Vue.js) or check API at `http://localhost:8000/endpoints`.
 
 ## Overené v MVP
 Testovací scenár potvrdil, že systém vie načítať logy, rozpoznať endpointy a spočítať výskyty.

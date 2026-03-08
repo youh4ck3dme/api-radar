@@ -26,6 +26,7 @@ export default defineConfig({
     }),
   ],
   server: {
+    port: 6666,
     proxy: {
       "/api": {
         target: "http://backend:8000",
