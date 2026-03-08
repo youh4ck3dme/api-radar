@@ -9,11 +9,15 @@
     <div class="glass-card">
       <!-- Logo -->
       <div class="logo-wrap">
-        <div class="logo-icon">🌐</div>
+        <div class="logo-outer">
+            <div class="logo-icon-glass">
+                <img src="/favicon.png" alt="Logo" class="logo-img" />
+            </div>
+        </div>
       </div>
 
-      <h1 class="title">API Centrum</h1>
-      <p class="subtitle">Prihlás sa do svojho účtu</p>
+      <h1 class="title">API Radar <span class="text-pro">Pro</span></h1>
+      <p class="subtitle">Unified Discovery & Shadow Defense</p>
 
       <form @submit.prevent="login" class="form">
         <!-- Email -->
@@ -105,41 +109,41 @@ const login = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #080808;
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
   overflow: hidden;
   position: relative;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 /* ── Animated orbs ────────────────────────────── */
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  animation: float 9s ease-in-out infinite;
+  filter: blur(120px);
+  animation: float 15s ease-in-out infinite;
 }
 .orb-1 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(240,240,230,0.12), rgba(200,200,190,0.04));
-  top: -120px; left: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(30, 58, 138, 0.3), rgba(30, 58, 138, 0.05));
+  top: -10%; left: -10%;
   animation-delay: 0s;
 }
 .orb-2 {
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(220,220,210,0.09), rgba(180,180,170,0.03));
-  bottom: -60px; right: -40px;
-  animation-delay: 3s;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.05));
+  bottom: -10%; right: -10%;
+  animation-delay: 5s;
 }
 .orb-3 {
-  width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(255,255,245,0.07), transparent);
-  top: 50%; left: 58%;
-  animation-delay: 6s;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent);
+  top: 40%; left: 50%;
+  animation-delay: -3s;
 }
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(18px, -25px) scale(1.04); }
-  66%       { transform: translate(-12px, 18px) scale(0.97); }
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33%       { transform: translate(30px, -40px) scale(1.1) rotate(5deg); }
+  66%       { transform: translate(-20px, 20px) scale(0.9) rotate(-3deg); }
 }
 
 /* ── Glass card ───────────────────────────────── */
@@ -147,23 +151,21 @@ const login = async () => {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 420px;
-  margin: 1rem;
-  padding: 2.5rem 2rem;
-  border-radius: 28px;
-  background: rgba(255, 255, 253, 0.04);
-  backdrop-filter: blur(40px) saturate(160%);
-  -webkit-backdrop-filter: blur(40px) saturate(160%);
-  border: 1px solid rgba(255, 255, 250, 0.1);
+  max-width: 440px;
+  margin: 1.5rem;
+  padding: 3.5rem 2.5rem;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(60px) saturate(180%);
+  -webkit-backdrop-filter: blur(60px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 40px 100px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(255,255,255,0.04),
-    inset 0 1px 0 rgba(255, 255, 250, 0.12),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
-  animation: cardIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    0 50px 120px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -171,36 +173,50 @@ const login = async () => {
 .logo-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
 }
-.logo-icon {
-  width: 60px; height: 60px;
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.75rem;
-  background: rgba(255,255,250,0.08);
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.15),
-    inset 0 -1px 0 rgba(0,0,0,0.2);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1);
+.logo-outer {
+    position: relative;
+    padding: 8px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.logo-icon-glass {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.logo-img {
+    width: 32px; height: 32px;
+    filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.5));
 }
 
 /* ── Typography ───────────────────────────────── */
 .title {
   text-align: center;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: rgba(255,255,250,0.92);
-  letter-spacing: -0.02em;
-  margin: 0 0 0.25rem;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.04em;
+  margin: 0 0 0.5rem;
+}
+.text-pro {
+    color: #3b82f6;
+    background: linear-gradient(to right, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .subtitle {
   text-align: center;
-  font-size: 0.875rem;
-  color: rgba(255,255,250,0.38);
-  margin: 0 0 2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.4);
+  margin: 0 0 2.5rem;
+  letter-spacing: 0.01em;
 }
 
 /* ── Form ─────────────────────────────────────── */
