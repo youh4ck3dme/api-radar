@@ -1,9 +1,30 @@
 <template>
   <div class="login-root">
-    <!-- Animated background orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <!-- Animated Radar Background -->
+    <div class="radar-container">
+      <div class="radar-scan"></div>
+      <div class="radar-grid"></div>
+      <div class="radar-ping p1"></div>
+      <div class="radar-ping p2"></div>
+      <div class="radar-ping p3"></div>
+    </div>
+
+    <!-- Scrolling Terminal Simulation -->
+    <div class="terminal-overlay">
+      <div class="terminal-feed">
+        <div v-for="(log, i) in logs" :key="i" class="log-line">
+          <span class="log-time">[{{ log.time }}]</span>
+          <span class="log-status" :class="log.type">{{ log.status }}</span>
+          <span class="log-msg">{{ log.msg }}</span>
+        </div>
+        <div class="log-line active">
+          <span class="log-time">[{{ currentTime }}]</span>
+          <span class="log-status info">EXEC</span>
+          <span class="log-msg">shadow_scanner --mode=stealth --target=auto</span>
+          <span class="terminal-cursor"></span>
+        </div>
+      </div>
+    </div>
 
     <!-- Glass card -->
     <div class="glass-card">
@@ -87,6 +108,40 @@ const error = ref('');
 const loading = ref(false);
 const showPassword = ref(false);
 
+const currentTime = ref(new Date().toLocaleTimeString('en-US', { hour12: false }));
+
+onMounted(() => {
+    setInterval(() => {
+        currentTime.value = new Date().toLocaleTimeString('en-US', { hour12: false });
+    }, 1000);
+});
+
+const logs = ref([
+  { time: '02:43:01', status: 'INIT', msg: 'Kernel boot sequence started...', type: 'sys' },
+  { time: '02:43:02', status: 'WAIT', msg: 'Establishing encrypted uplink...', type: 'sys' },
+  { time: '02:43:03', status: 'AUTH', msg: 'Shadow API detection engine: ONLINE', type: 'warn' },
+]);
+
+const possibleLogs = [
+  { status: 'SCAN', msg: 'Probing endpoint: /api/v1/auth', type: 'info' },
+  { status: 'SCAN', msg: 'Probing endpoint: /internal/config', type: 'info' },
+  { status: 'SHDW', msg: 'Shadow API detected at 88.212.19.47', type: 'crit' },
+  { status: 'SYNC', msg: 'Synchronizing with VPS registry...', type: 'sys' },
+  { status: 'PASS', msg: 'Heartbeat signal: SECTOR 7 OK', type: 'sys' },
+  { status: 'TRAF', msg: 'Incoming traffic: NGINX_LOG_PIPE', type: 'info' },
+];
+
+const addRandomLog = () => {
+    const log = possibleLogs[Math.floor(Math.random() * possibleLogs.length)];
+    const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+    logs.value.push({ ...log, time });
+    if (logs.value.length > 8) logs.value.shift();
+};
+
+onMounted(() => {
+    setInterval(addRandomLog, 2000);
+});
+
 const login = async () => {
   error.value = '';
   loading.value = true;
@@ -115,35 +170,113 @@ const login = async () => {
   font-family: 'Outfit', sans-serif;
 }
 
-/* ── Animated orbs ────────────────────────────── */
-.orb {
+/* ── Radar Background ─────────────────────────── */
+.radar-container {
   position: absolute;
+  inset: 0;
+  background: #020202;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radar-grid {
+  position: absolute;
+  width: 200vw;
+  height: 200vw;
+  background-image: 
+    linear-gradient(rgba(0, 255, 100, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 100, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  transform: rotateX(60deg) translateZ(-200px);
+}
+.radar-scan {
+  position: absolute;
+  width: 1000px;
+  height: 1000px;
+  background: conic-gradient(from 0deg, rgba(0, 255, 100, 0.3) 0%, transparent 40%);
   border-radius: 50%;
-  filter: blur(120px);
-  animation: float 15s ease-in-out infinite;
+  animation: scan 4s linear infinite;
+  mask-image: radial-gradient(circle, black 0%, transparent 70%);
 }
-.orb-1 {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(30, 58, 138, 0.3), rgba(30, 58, 138, 0.05));
-  top: -10%; left: -10%;
-  animation-delay: 0s;
+@keyframes scan {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
-.orb-2 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.05));
-  bottom: -10%; right: -10%;
-  animation-delay: 5s;
+.radar-ping {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #00ff64;
+  border-radius: 50%;
+  filter: blur(2px);
+  box-shadow: 0 0 15px #00ff64;
+  opacity: 0;
 }
-.orb-3 {
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent);
-  top: 40%; left: 50%;
-  animation-delay: -3s;
+.p1 { top: 20%; left: 30%; animation: ping 4s linear infinite; }
+.p2 { top: 60%; left: 70%; animation: ping 4s 1s linear infinite; }
+.p3 { top: 45%; left: 55%; animation: ping 4s 2.5s linear infinite; }
+
+@keyframes ping {
+  0% { opacity: 0; transform: scale(0.5); }
+  10% { opacity: 1; transform: scale(1); }
+  30% { opacity: 0; transform: scale(1.2); }
+  100% { opacity: 0; }
 }
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  33%       { transform: translate(30px, -40px) scale(1.1) rotate(5deg); }
-  66%       { transform: translate(-20px, 20px) scale(0.9) rotate(-3deg); }
+
+/* ── Terminal Simulation ──────────────────────── */
+.terminal-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  z-index: 5;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+.terminal-feed {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: -0.02em;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    opacity: 0.6;
+}
+.log-line {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.log-time { color: rgba(0, 255, 100, 0.4); }
+.log-status {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 10px;
+}
+.log-status.sys { background: rgba(0, 255, 100, 0.1); color: #00ff64; }
+.log-status.warn { background: rgba(255, 200, 0, 0.1); color: #ffc800; }
+.log-status.crit { background: rgba(255, 0, 0, 0.1); color: #ff0000; animation: blink 0.5s infinite; }
+.log-status.info { background: rgba(0, 150, 255, 0.1); color: #0096ff; }
+.log-msg { color: rgba(255,255,255,0.7); }
+
+.terminal-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #00ff64;
+    margin-left: 4px;
+    animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes blink {
+    50% { opacity: 0.3; }
 }
 
 /* ── Glass card ───────────────────────────────── */
